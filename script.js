@@ -1,7 +1,7 @@
 var RecipeApp = function () {
 
     var recipes = [
-        { 
+        /* { 
             name: 'Best Chicken Soup!', 
             image: 'https://static01.nyt.com/images/2016/11/29/dining/recipelab-chick-noodle-still/recipelab-chick-noodle-still-master675.jpg',
             ingredients: [
@@ -9,7 +9,7 @@ var RecipeApp = function () {
                 { name: 'medium carrots'},
                 { name: 'onions' },
             ] 
-        }
+        } */
     ];
 
 
@@ -18,6 +18,14 @@ var RecipeApp = function () {
 
     //id's for ingredients
     var ingId = 0;
+
+    var _findRecipeById = function (id) {
+        for (var i = 0; i < recipes.length; i += 1) {
+          if (recipes[i].id === id) {
+            return recipes[i];
+          }
+        }
+    }
 
     var createRecipe = function(name, image){
         var recipe = {
@@ -32,11 +40,12 @@ var RecipeApp = function () {
 
         recipes.push(recipe);
     }; 
-    function addIngredient(text,recipeId){
+    function addIngredient(textIngredient,recipeId){
 
-        var recipe = _findPostById(id);
-        var ingredient = { text: textIngredient };
+        var recipe = _findRecipeById(recipeId);
+        var ingredient = { name: textIngredient, id: ingId };
         recipe.ingredients.push(ingredient);
+        ingId++;
         
     }
 
@@ -54,7 +63,7 @@ var RecipeApp = function () {
         {
             // 2 - Loop through the ingredients array,
             for (var i=0; i < recipe.ingredients.length; i++) {
-                liIngredients+= "<li>" + recipe.ingredients[i].name + "</li>";
+                liIngredients+= "<li data-id='" + i + '>' + recipe.ingredients[i].name + "</li>";
             }
         }
         return liIngredients;
@@ -70,9 +79,9 @@ var RecipeApp = function () {
 
             //return HTML for all ingredients
             var ingredients = _getIngredients(recipe); //add code
-            debugger;
+            
             $recipes.append(
-                '<div class="   col-md-6  offset-md-3 img-fluid shadow" data-id="' + recipe.id + '">' + 
+                '<div class="recipe" col-md-6  offset-md-3 img-fluid shadow data-id="' + recipe.id + '">' + 
                     '<h4 class="text-capitalize font-italic text-center">' + recipe.name + '</h4>' +
                     '<img class="recipe-img" src="' + recipe.image + '"/>' +
                     '<hr>' +
@@ -100,6 +109,7 @@ var $recipes = $('.recipes');
 
 var app = RecipeApp();
 
+app.renderRecipes();
 
 //--------EVENTS
 
@@ -116,11 +126,12 @@ $('.add-recipe').on('click', function(){
 
 
 $recipes.on('click','.add-ingredients', function () {
+    debugger;
     // Get the input comment of the current post we enter
     var text = $(this).closest(".recipe").find('.ingredient-name').val();
-
+    
     app.createIngredients(this, text);
-    // Update the view of the comments
+    // Update the view of the ingredients
     app.renderRecipes(this);
 });
 
